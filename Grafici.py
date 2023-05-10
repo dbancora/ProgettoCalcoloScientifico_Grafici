@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Carica i dati dal file CSV
-data = pd.read_csv('dati.csv')
+data = pd.read_csv('dati_matlab.csv')
 data = data.sort_values(by='Size')
 
 # Combinazione delle colonne MatrixName e Size in una nuova lista di nomi delle matrici
