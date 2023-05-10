@@ -27,7 +27,7 @@ ax2 = ax1.twinx()
 # Barre per i tempi
 color = 'tab:blue'
 ax2.set_ylabel('Time (s)', color=color)
-ax2.bar(matrix_names, data['Time'], color=color, width=0.2, align='edge')
+ax2.bar(matrix_names, data['Time'], color=color, width=0.2, align='edge', alpha=0.5)
 ax2.tick_params(axis='y', labelcolor=color)
 
 # Aggiungi le etichette di testo per i tempi utilizzando il metodo annotate di Matplotlib
@@ -41,4 +41,38 @@ plt.title('Memory and Time for Solving Linear Systems')
 
 # Visualizza il grafico
 plt.show()
+
+
+#---------GRAFICO ERRORE RELATIVO----------#
+
+
+# Normalizza l'errore relativo
+max_error = data['Error'].max()
+data['NormalizedError'] = data['Error'] / max_error
+
+
+# Crea un grafico a barre dell'errore relativo normalizzato per ogni matrice
+plt.bar(matrix_names, data['NormalizedError'], color='green')
+
+# Aggiungi le etichette sull'asse x e y
+plt.xlabel('Matrice')
+plt.ylabel('Errore Relativo Normalizzato')
+
+# Aggiungi le etichette dell'errore relativo sopra ogni barra
+for i in range(len(matrix_names)):
+    plt.text(i, data['NormalizedError'][i]+0.05, f"{data['Error'][i]}", ha='center')
+
+
+
+# Ruota le etichette sull'asse x di 90 gradi per renderle leggibili
+# plt.xticks(rotation=90)
+
+# Mostra il grafico
+plt.show()
+
+
+
+
+
+
 
