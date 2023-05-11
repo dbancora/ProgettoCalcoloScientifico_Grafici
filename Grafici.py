@@ -2,8 +2,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Carica i dati dal file CSV
-data = pd.read_csv('dati_python.csv')
-data = data.sort_values(by='Size')
+data = pd.read_csv('dati_java.csv')
+data = data.sort_values(by='Size').reset_index(drop=True)
+
+print(data)
 
 # Combinazione delle colonne MatrixName e Size in una nuova lista di nomi delle matrici
 matrix_names = [f"{name} ({size/(1024*1024):.2f} MB)" for name, size in zip(data['MatrixName'], data['Size'])]
@@ -37,7 +39,7 @@ for i, v in enumerate(data['MemoryDiff']):
 
 
 # Crea l'asse y per la memoria
-ax2 = ax1.twinx()
+ax2.tick_params(axis='y', labelcolor=color)
 
 # Aggiungi l'etichetta sull'asse x, inclinazione e titolo
 plt.xticks(rotation=45, ha='right')
@@ -62,6 +64,9 @@ plt.bar(matrix_names, data['NormalizedError'], color='green')
 # Aggiungi le etichette sull'asse x e y
 plt.xlabel('Matrice')
 plt.ylabel('Errore Relativo Normalizzato')
+
+# Imposta la scala logaritmica sull'asse y
+plt.yscale('log')
 
 # Aggiungi le etichette dell'errore relativo sopra ogni barra
 for i in range(len(matrix_names)):
