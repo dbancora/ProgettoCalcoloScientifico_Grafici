@@ -32,7 +32,6 @@ for data_type in data_types:
 
     # Calcola il valore massimo della memoria tra i due set di dati
     max_time = max(data_windows['Time'].max(), data_linux['Time'].max())
-    print(max_time)
 
     # Aggiungi le etichette della memoria sopra ogni barra
     for i in range(len(matrix_names)):
@@ -65,7 +64,6 @@ for data_type in data_types:
 
     # Calcola il valore massimo della memoria tra i due set di dati
     max_memory = max(data_windows['MemoryDiff'].max() / (1024*1024), data_linux['MemoryDiff'].max() / (1024*1024))
-    print(max_memory)
 
     # Aggiungi le etichette della memoria sopra ogni barra
     for i in range(len(matrix_names)):
