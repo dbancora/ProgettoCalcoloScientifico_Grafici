@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Lista dei tipi di dati da elaborare (Java e Python)
-data_types = ['java', 'python']
+data_types = ['java', 'python', 'matlab']
 
 for data_type in data_types:
     # Carica i dati dai file CSV
