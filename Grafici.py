@@ -14,7 +14,8 @@ for data_type in data_types:
     data_linux = data_linux.sort_values(by='Size').reset_index(drop=True)
 
     # Combinazione delle colonne MatrixName e Size in una nuova lista di nomi delle matrici
-    matrix_names = [f"{name} \n({size/(1024*1024):.2f} MB)" for name, size in zip(data_windows['MatrixName'], data_windows['Size'])]
+    matrix_names = [f"{name} \n({size / (1024 * 1024):.2f} MB)" for name, size in
+                    zip(data_windows['MatrixName'], data_windows['Size'])]
 
     # Grafico per il tempo
     fig, ax1 = plt.subplots()
@@ -27,7 +28,6 @@ for data_type in data_types:
     ax1.legend(loc='upper left')
     ax1.set_title(f"Time Comparison - {data_type.capitalize()}")
 
-
     plt.xticks(rotation=45, ha='right', fontsize=10)
 
     # Calcola il valore massimo della memoria tra i due set di dati
@@ -37,7 +37,7 @@ for data_type in data_types:
     for i in range(len(matrix_names)):
         time_label_windows = "{:.2f} s".format(data_windows['Time'][i])
         time_label_linux = "{:.2f} s".format(data_linux['Time'][i])
-                
+
         # Aggiungi un offset orizzontale diverso per ciascuna etichetta
         offset_windows = -0.05
         offset_linux = 0.05
@@ -53,8 +53,10 @@ for data_type in data_types:
     fig, ax2 = plt.subplots()
     color = 'tab:blue'
     ax2.set_ylabel('Memory (MB)', color=color)
-    ax2.bar(matrix_names, data_windows['MemoryDiff'] / (1024*1024), color=color, width=-0.2, align='edge', alpha=0.5, label='Windows')
-    ax2.bar(matrix_names, data_linux['MemoryDiff'] / (1024*1024), color='tab:cyan', width=0.2, align='edge', alpha=0.5, label='Linux')
+    ax2.bar(matrix_names, data_windows['MemoryDiff'] / (1024 * 1024), color=color, width=-0.2, align='edge', alpha=0.5,
+            label='Windows')
+    ax2.bar(matrix_names, data_linux['MemoryDiff'] / (1024 * 1024), color='tab:cyan', width=0.2, align='edge',
+            alpha=0.5, label='Linux')
     ax2.set_yscale('log')
     ax2.tick_params(axis='y', labelcolor=color)
     ax2.legend(loc='upper left')
@@ -63,21 +65,22 @@ for data_type in data_types:
     plt.xticks(rotation=45, ha='right', fontsize=10)
 
     # Calcola il valore massimo della memoria tra i due set di dati
-    max_memory = max(data_windows['MemoryDiff'].max() / (1024*1024), data_linux['MemoryDiff'].max() / (1024*1024))
+    max_memory = max(data_windows['MemoryDiff'].max() / (1024 * 1024), data_linux['MemoryDiff'].max() / (1024 * 1024))
 
     # Aggiungi le etichette della memoria sopra ogni barra
     for i in range(len(matrix_names)):
-        memory_label_windows = "{:.2f} MB".format(data_windows['MemoryDiff'][i] / (1024*1024))
-        memory_label_linux = "{:.2f} MB".format(data_linux['MemoryDiff'][i] / (1024*1024))
-                
+        memory_label_windows = "{:.2f} MB".format(data_windows['MemoryDiff'][i] / (1024 * 1024))
+        memory_label_linux = "{:.2f} MB".format(data_linux['MemoryDiff'][i] / (1024 * 1024))
+
         # Aggiungi un offset orizzontale diverso per ciascuna etichetta
         offset_windows = -0.05
         offset_linux = 0.05
 
-        label_height = max(data_windows['MemoryDiff'][i] / (1024*1024), data_linux['MemoryDiff'][i] / (1024*1024)) + 0.05 * max_memory
+        label_height = max(data_windows['MemoryDiff'][i] / (1024 * 1024),
+                           data_linux['MemoryDiff'][i] / (1024 * 1024)) + 0.05 * max_memory
         ax2.text(i + offset_windows, label_height, memory_label_windows, ha='right', va='center', fontsize=6)
         ax2.text(i + offset_linux, label_height, memory_label_linux, ha='left', va='center', fontsize=6)
-    
+
     # plt.tight_layout()  # Aggiunge spazio sufficiente per visualizzare le etichette sotto NON PIU' NECESSARIO 
     plt.show()  # Visualizza la figura
 
@@ -99,7 +102,7 @@ for data_type in data_types:
     for i in range(len(matrix_names)):
         error_label_windows = "{:.4e}".format(data_windows['Error'][i])
         error_label_linux = "{:.4e}".format(data_linux['Error'][i])
-        
+
         # Calcola l'altezza verticale per le etichette
         offset_windows = -0.05
         offset_linux = 0.05
