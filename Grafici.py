@@ -43,8 +43,8 @@ for data_type in data_types:
         offset_linux = 0.05
 
         label_height = max(data_windows['Time'][i], data_linux['Time'][i]) + 0.05 * max_time
-        ax1.text(i + offset_windows, label_height, time_label_windows, ha='right', va='center', fontsize=6)
-        ax1.text(i + offset_linux, label_height, time_label_linux, ha='left', va='center', fontsize=6)
+        ax1.text(i + offset_windows, label_height, time_label_windows, ha='right', va='center', fontsize=10)
+        ax1.text(i + offset_linux, label_height, time_label_linux, ha='left', va='center', fontsize=10)
 
     # plt.tight_layout()  # Aggiunge spazio sufficiente per visualizzare le etichette sotto NON PIU' NECESSARIO 
     plt.show()  # Visualizza la figura
@@ -78,8 +78,8 @@ for data_type in data_types:
 
         label_height = max(data_windows['MemoryDiff'][i] / (1024 * 1024),
                            data_linux['MemoryDiff'][i] / (1024 * 1024)) + 0.05 * max_memory
-        ax2.text(i + offset_windows, label_height, memory_label_windows, ha='right', va='center', fontsize=6)
-        ax2.text(i + offset_linux, label_height, memory_label_linux, ha='left', va='center', fontsize=6)
+        ax2.text(i + offset_windows, label_height, memory_label_windows, ha='right', va='center', fontsize=10)
+        ax2.text(i + offset_linux, label_height, memory_label_linux, ha='left', va='center', fontsize=10)
 
     # plt.tight_layout()  # Aggiunge spazio sufficiente per visualizzare le etichette sotto NON PIU' NECESSARIO 
     plt.show()  # Visualizza la figura
@@ -108,9 +108,11 @@ for data_type in data_types:
         offset_linux = 0.05
 
         label_height = max(data_windows['Error'][i], data_linux['Error'][i]) + 0.05 * max_error
-        ax3.text(i + offset_windows, label_height, error_label_windows, ha='right', fontsize=6)
-        ax3.text(i + offset_linux, label_height, error_label_linux, ha='left', fontsize=6)
+        ax3.text(i + offset_windows, label_height, error_label_windows, ha='right', fontsize=10)
+        ax3.text(i + offset_linux, label_height, error_label_linux, ha='left', fontsize=10)
 
     # Mostra i grafici
     # plt.tight_layout()
     plt.show()
+
+#Bisognerebbe fare i grafici (uno per windows e uno per linux): mostrare le metrici e la differenza in barplot. Per esempio una matrice rossa, si fa vedere la memoria, quella gialla si fa vedere qualcosa d'altro ecc... 
