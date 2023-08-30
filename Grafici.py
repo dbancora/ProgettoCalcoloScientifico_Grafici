@@ -119,6 +119,8 @@ for data_type in data_types:
     # plt.tight_layout()
     plt.show()
 
+# Funzione per creare grafici che mettono a confronto i tempi, gli errori e la memoria di tutti i linguaggi di programmazione 
+# sui vari sistemi operativi testati 
 def create_comparison_plot(data, data_types, os_name, value_column, ylabel, title):
     # Estrai tutti i nomi delle matrici da uno dei dataframes
     matrix_names = data[data_types[2]]['MatrixName']
@@ -188,6 +190,80 @@ for os_name in os_names:
     create_comparison_plot(data, data_types, os_name, 'MemoryDiff', 'Memory', 'Memory Comparison')
 
 
+# Leggi i dati e crea i grafici affiancati per entrambi i sistemi operativi
+fig, axes = plt.subplots(1, 2, figsize=(15, 6))
+
+# Crea due grafici che mettono a confronto il tempo necessario per risolvere le matrici nei vari linguaggi scelti
+# nei vari os scelti per i test
+for idx, os_name in enumerate(os_names):
+    data = {}
+    for data_type in data_types:
+        data[data_type] = pd.read_csv(f'dati_{data_type}_{os_name}.csv')
+
+    # Calcola la media dei tempi per ogni linguaggio di programmazione
+    average_times = []
+    for data_type in data_types:
+        average_time = data[data_type]['Time'].mean()
+        average_times.append(average_time)
+
+    # Crea il grafico delle medie dei tempi nel sottoplot corrispondente
+    axes[idx].bar(data_types, average_times)
+    axes[idx].set_xlabel('Programming Languages')
+    axes[idx].set_ylabel('Average Time (s)')
+    axes[idx].set_title(f'Average Time Comparison - {os_name.capitalize()}')
+
+plt.tight_layout()
+plt.show()
+
+# Leggi i dati e crea i grafici affiancati per entrambi i sistemi operativi
+fig, axes = plt.subplots(1, 2, figsize=(15, 6))
+
+# Crea due grafici che mettono a confronto l'errore del sistema lineare nei vari linguaggi scelti
+# nei vari os scelti per i test
+for idx, os_name in enumerate(os_names):
+    data = {}
+    for data_type in data_types:
+        data[data_type] = pd.read_csv(f'dati_{data_type}_{os_name}.csv')
+
+    # Calcola la media degli errori relativi per ogni linguaggio di programmazione
+    average_errors = []
+    for data_type in data_types:
+        average_error = data[data_type]['Error'].mean()
+        average_errors.append(average_error)
+
+    # Crea il grafico delle medie degli errori relativi nel sottoplot corrispondente
+    axes[idx].bar(data_types, average_errors)
+    axes[idx].set_xlabel('Programming Languages')
+    axes[idx].set_ylabel('Average Relative Error')
+    axes[idx].set_title(f'Average Relative Error Comparison - {os_name.capitalize()}')
+
+plt.tight_layout()
+plt.show()
+
+
+
+# Leggi i dati e crea i grafici affiancati per entrambi i sistemi operativi
+fig, axes = plt.subplots(1, 2, figsize=(15, 6))
+
+for idx, os_name in enumerate(os_names):
+    data = {}
+    for data_type in data_types:
+        data[data_type] = pd.read_csv(f'dati_{data_type}_{os_name}.csv')
+
+    # Calcola la media delle differenze di memoria per ogni linguaggio di programmazione (in MB)
+    average_memory_diffs = []
+    for data_type in data_types:
+        average_memory_diff = data[data_type]['MemoryDiff'].mean() / (1024 * 1024)  # Converti da byte a MB
+        average_memory_diffs.append(average_memory_diff)
+
+    # Crea il grafico delle medie delle differenze di memoria nel sottoplot corrispondente
+    axes[idx].bar(data_types, average_memory_diffs)
+    axes[idx].set_xlabel('Programming Languages')
+    axes[idx].set_ylabel('Average Memory Difference (MB)')
+    axes[idx].set_title(f'Average Memory Difference Comparison - {os_name.capitalize()}')
+
+plt.tight_layout()
+plt.show()
 
 
 
