@@ -1,8 +1,12 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
 
 # Lista dei tipi di dati da elaborare (Java e Python)
-data_types = ['java', 'python', 'matlab']
+data_types = ['matlab', 'java', 'python', 'r']
+
+# Definisci i tipi di dati e il sistema operativo
+os_names = ['windows', 'linux']
 
 for data_type in data_types:
     # Carica i dati dai file CSV
@@ -89,7 +93,7 @@ for data_type in data_types:
     ax3.bar(matrix_names, data_windows['Error'], color='green', width=-0.2, align='edge', label='Windows')
     ax3.bar(matrix_names, data_linux['Error'], color='lightgreen', width=0.2, align='edge', label='Linux')
     ax3.set_yscale('log')
-    ax3.set_ylabel('Normalized Relative Error')
+    ax3.set_ylabel('Error')
     ax3.legend(loc='upper right')
     ax3.set_title(f"Error Comparison - {data_type.capitalize()}")
 
@@ -115,4 +119,83 @@ for data_type in data_types:
     # plt.tight_layout()
     plt.show()
 
-#Bisognerebbe fare i grafici (uno per windows e uno per linux): mostrare le metrici e la differenza in barplot. Per esempio una matrice rossa, si fa vedere la memoria, quella gialla si fa vedere qualcosa d'altro ecc... 
+def create_comparison_plot(data, data_types, os_name, value_column, ylabel, title):
+    # Estrai tutti i nomi delle matrici da uno dei dataframes
+    matrix_names = data[data_types[2]]['MatrixName']
+
+    # Calcola la larghezza di ogni barra
+    bar_width = 0.2
+
+    # Crea il grafico
+    fig, ax = plt.subplots()
+
+    # Ordina le matrici in base alla loro dimensione
+    sorted_matrix_names = sorted(matrix_names, key=lambda x: data[data_types[2]][data[data_types[2]]['MatrixName'] == x]['Size'].values[0])
+
+    # Loop attraverso ciascun linguaggio di programmazione
+    for i, data_type in enumerate(data_types):
+        value_values = []
+
+        # Estrai i valori corrispondenti (errore, tempo o memoria) per le matrici presenti nel dataframe corrente
+        for matrix_name in sorted_matrix_names:
+            if matrix_name in data[data_type]['MatrixName'].values:
+                value_values.append(data[data_type][data[data_type]['MatrixName'] == matrix_name][value_column].values[0])
+            else:
+                value_values.append(0)  # Imposta il valore corrispondente a 0 per le matrici mancanti
+
+        # Calcola la posizione delle barre per il linguaggio di programmazione corrente
+        x_indices = np.arange(len(sorted_matrix_names)) + i * bar_width - (len(data_types) - 1) * bar_width / 2
+
+        # Crea le barre per i valori corrispondenti (errore, tempo o memoria) di ciascun linguaggio di programmazione
+        bars = ax.bar(x_indices, value_values, bar_width, label=f'{data_type} {ylabel}')
+
+        max_label_height = ax.get_ylim()[1] * 0.9
+
+        # Aggiungi il valore corrispondente al formato corretto all'interno di ogni barra
+        for bar, value in zip(bars, value_values):
+            if value_column == 'Time':
+                formatted_value = f'{value:.3f} s'  # Formattazione in secondi per il tempo
+            elif value_column == 'MemoryDiff':
+                formatted_value = f'{value / (1024 * 1024):.1f} MB'  # Formattazione in MB per la memoria
+            else:
+                formatted_value = f'{value:.2e}'  # Notazione scientifica per l'errore
+            bar_height = bar.get_height()
+            if bar_height < max_label_height:
+                ax.text(bar.get_x() + bar.get_width() / 2, bar_height, formatted_value, ha='center', va='bottom', rotation='horizontal', fontsize=8)
+            else:
+                ax.text(bar.get_x() + bar.get_width() / 2, max_label_height, formatted_value, ha='center', va='bottom', rotation='horizontal', fontsize=8)
+
+
+    ax.set_yscale('log')  # Scala logaritmica sull'asse y
+    ax.set_xticks(np.arange(len(sorted_matrix_names)))
+    ax.set_xticklabels(sorted_matrix_names, rotation=45, ha='right', fontsize=10)
+    ax.set_xlabel('Matrices')
+    ax.set_ylabel(ylabel)
+    ax.legend()
+    ax.set_title(f'{title} - {os_name.capitalize()}')
+
+    plt.tight_layout()
+    plt.show()
+
+# Leggi i dati e crea i grafici per entrambi i sistemi operativi
+for os_name in os_names:
+    data = {}
+    for data_type in data_types:
+        data[data_type] = pd.read_csv(f'dati_{data_type}_{os_name}.csv')
+    
+    create_comparison_plot(data, data_types, os_name, 'Error', 'Relative Error', 'Relative Error Comparison')
+    create_comparison_plot(data, data_types, os_name, 'Time', 'Time', 'Time Comparison')
+    create_comparison_plot(data, data_types, os_name, 'MemoryDiff', 'Memory', 'Memory Comparison')
+
+
+
+
+
+
+
+
+
+
+
+
+ 
