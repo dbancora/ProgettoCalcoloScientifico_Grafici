@@ -190,57 +190,78 @@ for os_name in os_names:
     create_comparison_plot(data, data_types, os_name, 'MemoryDiff', 'Memory', 'Memory Comparison')
 
 
-# Leggi i dati e crea i grafici affiancati per entrambi i sistemi operativi
+
+
+# Creazione dell'elenco di matrici comuni
+common_matrices = set(data[data_types[0]]['MatrixName'])
+for data_type in data_types[1:]:
+    common_matrices &= set(data[data_type]['MatrixName'])
+
+########################################################## 1. GRAFICO MEDIA - Tempo ################################################
+# Grafico che mette in comparazione il tempo medio necessario per risolvere chol + sistema lin nei vari linguaggi
+# oltre che a visualizzzare la differenza tra linux e win
 fig, axes = plt.subplots(1, 2, figsize=(15, 6))
 
-# Crea due grafici che mettono a confronto il tempo necessario per risolvere le matrici nei vari linguaggi scelti
-# nei vari os scelti per i test
 for idx, os_name in enumerate(os_names):
     data = {}
     for data_type in data_types:
         data[data_type] = pd.read_csv(f'dati_{data_type}_{os_name}.csv')
 
-    # Calcola la media dei tempi per ogni linguaggio di programmazione
+    # Calcola la media dei tempi solo sulle matrici comuni
     average_times = []
+    common_matrix_names = set(data[data_types[0]]['MatrixName']).intersection(data[data_types[1]]['MatrixName'])
     for data_type in data_types:
-        average_time = data[data_type]['Time'].mean()
+        average_time = data[data_type][data[data_type]['MatrixName'].isin(common_matrix_names)]['Time'].mean()
         average_times.append(average_time)
 
     # Crea il grafico delle medie dei tempi nel sottoplot corrispondente
-    axes[idx].bar(data_types, average_times)
+    bars = axes[idx].bar(data_types, average_times)
     axes[idx].set_xlabel('Programming Languages')
     axes[idx].set_ylabel('Average Time (s)')
     axes[idx].set_title(f'Average Time Comparison - {os_name.capitalize()}')
 
+    # Aggiungi il valore della media sopra ogni barra
+    for bar, avg_time in zip(bars, average_times):
+        axes[idx].text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.05, f'{avg_time:.2f}s', ha='center', va='bottom', fontsize=10)
+
 plt.tight_layout()
 plt.show()
+
+########################################################## 2. GRAFICO MEDIA - Errore ################################################
+# Grafico che mette in comparazione l'errore relativo nel risolvere il sistema lin nei vari linguaggi
+# oltre che a visualizzzare la differenza tra linux e win
 
 # Leggi i dati e crea i grafici affiancati per entrambi i sistemi operativi
 fig, axes = plt.subplots(1, 2, figsize=(15, 6))
 
-# Crea due grafici che mettono a confronto l'errore del sistema lineare nei vari linguaggi scelti
-# nei vari os scelti per i test
 for idx, os_name in enumerate(os_names):
     data = {}
     for data_type in data_types:
         data[data_type] = pd.read_csv(f'dati_{data_type}_{os_name}.csv')
 
-    # Calcola la media degli errori relativi per ogni linguaggio di programmazione
+    # Calcola la media degli errori relativi solo sulle matrici comuni
     average_errors = []
+    common_matrix_names = set(data[data_types[0]]['MatrixName']).intersection(data[data_types[1]]['MatrixName'])
     for data_type in data_types:
-        average_error = data[data_type]['Error'].mean()
+        average_error = data[data_type][data[data_type]['MatrixName'].isin(common_matrix_names)]['Error'].mean()
         average_errors.append(average_error)
 
     # Crea il grafico delle medie degli errori relativi nel sottoplot corrispondente
-    axes[idx].bar(data_types, average_errors)
+    bars = axes[idx].bar(data_types, average_errors)
     axes[idx].set_xlabel('Programming Languages')
     axes[idx].set_ylabel('Average Relative Error')
     axes[idx].set_title(f'Average Relative Error Comparison - {os_name.capitalize()}')
 
+    # Aggiungi il valore della media sopra ogni barra
+    for bar, avg_error in zip(bars, average_errors):
+        axes[idx].text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.01, f'{avg_error:.2e}', ha='center', va='bottom', fontsize=6)
+
 plt.tight_layout()
 plt.show()
 
-
+########################################################## 3. GRAFICO MEDIA - Memoria ################################################
+# Grafico che mette in comparazione la memoria utilizzata nel risolvere chol + il sistema lin nei vari linguaggi
+# oltre che a visualizzzare la differenza tra linux e win
 
 # Leggi i dati e crea i grafici affiancati per entrambi i sistemi operativi
 fig, axes = plt.subplots(1, 2, figsize=(15, 6))
@@ -250,20 +271,26 @@ for idx, os_name in enumerate(os_names):
     for data_type in data_types:
         data[data_type] = pd.read_csv(f'dati_{data_type}_{os_name}.csv')
 
-    # Calcola la media delle differenze di memoria per ogni linguaggio di programmazione (in MB)
+    # Calcola la media delle differenze di memoria solo sulle matrici comuni (in MB)
     average_memory_diffs = []
+    common_matrix_names = set(data[data_types[0]]['MatrixName']).intersection(data[data_types[1]]['MatrixName'])
     for data_type in data_types:
-        average_memory_diff = data[data_type]['MemoryDiff'].mean() / (1024 * 1024)  # Converti da byte a MB
+        average_memory_diff = data[data_type][data[data_type]['MatrixName'].isin(common_matrix_names)]['MemoryDiff'].mean() / (1024 * 1024)  # Converti da byte a MB
         average_memory_diffs.append(average_memory_diff)
 
     # Crea il grafico delle medie delle differenze di memoria nel sottoplot corrispondente
-    axes[idx].bar(data_types, average_memory_diffs)
+    bars = axes[idx].bar(data_types, average_memory_diffs)
     axes[idx].set_xlabel('Programming Languages')
     axes[idx].set_ylabel('Average Memory Difference (MB)')
     axes[idx].set_title(f'Average Memory Difference Comparison - {os_name.capitalize()}')
 
+    # Aggiungi il valore della media sopra ogni barra
+    for bar, avg_memory_diff in zip(bars, average_memory_diffs):
+        axes[idx].text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 1, f'{avg_memory_diff:.1f} MB', ha='center', va='bottom', fontsize=10)
+
 plt.tight_layout()
 plt.show()
+
 
 
 
