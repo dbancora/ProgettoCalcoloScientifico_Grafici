@@ -104,8 +104,8 @@ for data_type in data_types:
     max_error = max(data_windows['Error'].max(), data_linux['Error'].max())
 
     for i in range(len(matrix_names)):
-        error_label_windows = "{:.4e}".format(data_windows['Error'][i])
-        error_label_linux = "{:.4e}".format(data_linux['Error'][i])
+        error_label_windows = "{:.2e}".format(data_windows['Error'][i])
+        error_label_linux = "{:.2e}".format(data_linux['Error'][i])
 
         # Calcola l'altezza verticale per le etichette
         offset_windows = -0.05
@@ -151,21 +151,38 @@ def create_comparison_plot(data, data_types, os_name, value_column, ylabel, titl
         # Crea le barre per i valori corrispondenti (errore, tempo o memoria) di ciascun linguaggio di programmazione
         bars = ax.bar(x_indices, value_values, bar_width, label=f'{data_type} {ylabel}')
 
-        max_label_height = ax.get_ylim()[1] * 0.9
-
         # Aggiungi il valore corrispondente al formato corretto all'interno di ogni barra
         for bar, value in zip(bars, value_values):
             if value_column == 'Time':
-                formatted_value = f'{value:.3f} s'  # Formattazione in secondi per il tempo
+                formatted_value = f'{value:.2f} s'  # Formattazione in secondi per il tempo
             elif value_column == 'MemoryDiff':
                 formatted_value = f'{value / (1024 * 1024):.1f} MB'  # Formattazione in MB per la memoria
             else:
                 formatted_value = f'{value:.2e}'  # Notazione scientifica per l'errore
+            
             bar_height = bar.get_height()
-            if bar_height < max_label_height:
-                ax.text(bar.get_x() + bar.get_width() / 2, bar_height, formatted_value, ha='center', va='bottom', rotation='horizontal', fontsize=8)
+
+            if value_column == 'Error':
+                max_valore_label = 3.10e-16 
+                max_label_height = bar_height * 1.10
+            elif value_column == 'Time': 
+                max_valore_label = 0.01
+                max_label_height = bar_height * 1.10
+            elif value_column == 'MemoryDiff': 
+                max_valore_label = 2.5e+7
+                max_label_height = bar_height * 1.10                  
+            
+
+            # Posiziona l'etichetta all'interno se c'è spazio sufficiente, altrimenti sopra
+            if bar_height <= max_valore_label:
+                # Posiziona l'etichetta sopra la barra
+                ax.text(bar.get_x() + bar.get_width() / 2, max_label_height, formatted_value,
+                        ha='center', va='bottom', rotation='vertical', fontsize=15)                
             else:
-                ax.text(bar.get_x() + bar.get_width() / 2, max_label_height, formatted_value, ha='center', va='bottom', rotation='horizontal', fontsize=8)
+                # Posiziona l'etichetta all'interno della barra
+                ax.text(bar.get_x() + bar.get_width() / 2, max_valore_label, formatted_value,
+                        ha='center', va='center', rotation='vertical', fontsize=15)
+                
 
 
     ax.set_yscale('log')  # Scala logaritmica sull'asse y
